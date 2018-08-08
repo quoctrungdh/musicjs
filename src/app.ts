@@ -1,17 +1,6 @@
 import * as express from 'express';
-const db = require('./firebase').db;
 
-function getAllTracks() {
-  return new Promise((resolve, reject) => {
-    db.collection('tracks')
-      .get()
-      .then((snapshot) => {
-        const raw = snapshot.docs.map(s => s.data())
-        resolve(raw)
-      })
-      .catch(err => { throw err; })
-  })
-}
+import { trackController } from './controllers/TrackControler';
 
 class App {
   public app: express.Application;
@@ -22,15 +11,7 @@ class App {
   }
 
   private initRoutes(): void {
-    const router = express.Router();
-
-    router.get('/', async(req, res) => {
-      const s = await getAllTracks();
-
-      res.status(200).send(s)
-    })
-
-    this.app.use('/', router)
+    trackController.register(this.app)
   }
 
 }
